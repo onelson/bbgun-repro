@@ -1,11 +1,11 @@
 package bbgun;
 
-
+import java.net.IDN;
 import javafx.application.Application;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
+
 
 
 public class MobileApp extends Application {
@@ -15,17 +15,9 @@ public class MobileApp extends Application {
 
         primaryStage.setTitle("BBGun");
         AnchorPane appRoot = new AnchorPane();
-
-        bbgun.BBGunApp app = new bbgun.BBGunApp();
-        Pane appPane = app.delegate();
-        appRoot.getChildren().add(appPane);
-
-        AnchorPane.setTopAnchor(appPane, 20.0);
-        AnchorPane.setBottomAnchor(appPane, 0.0);
-
-        Scene scene = new Scene(appPane);
-        scene.getStylesheets().add("bbgun/main.css");
+        Scene scene = new Scene(appRoot);
         primaryStage.setScene(scene);
+        IDN.toASCII("api.github.com");
         primaryStage.show();
     }
 }
