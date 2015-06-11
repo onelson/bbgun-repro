@@ -1,0 +1,18 @@
+#app {
+    -fx-background-color: #eee;
+}
+
+#topbar {
+    -fx-base: #555;
+    -fx-background-color: #222;
+}
+
+#topbar .brand {
+    -fx-text-fill: #eee;
+    -fx-text-alignment: center;
+    -fx-font-size: 20;
+}
+
+#login .title {
+    -fx-font-size: 20;
+}

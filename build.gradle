@@ -1,0 +1,115 @@
+
+allprojects {
+    version = '1.0-SNAPSHOT'
+    ext {
+        appName = 'BBGun'
+        scalaVersion = '2.11'
+        specs2Version = '3.6.1'
+        dispatchVersion = '0.11.2'
+        configOverride = System.getProperty('config.file')
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
+    }
+}
+
+
+project(':core') {
+    apply plugin: 'scala'
+    sourceCompatibility = 1.8
+
+    repositories {
+        maven { url 'http://dl.bintray.com/pchiusano/maven' }
+    }
+
+    dependencies {
+        compile "org.scala-lang:scala-library:$scalaVersion.6"
+        compile "org.scalafx:scalafx_$scalaVersion:8.0.40-R8"
+        compile "com.typesafe:config:1.3.0"
+        compile "net.databinder.dispatch:dispatch-core_$scalaVersion:$dispatchVersion"
+        compile "net.databinder.dispatch:dispatch-json4s-jackson_$scalaVersion:$dispatchVersion"
+        compile "net.codingwell:scala-guice_$scalaVersion:4.0.0"
+        compile "com.google.inject:guice:4.0"
+        compile "org.slf4j:slf4j-simple:1.7.12"
+        compile "org.clapper:grizzled-slf4j_$scalaVersion:1.0.2"
+
+        testCompile 'junit:junit:4.12'
+        testCompile "org.specs2:specs2-core_$scalaVersion:$specs2Version"
+        testCompile "org.specs2:specs2-junit_$scalaVersion:$specs2Version"
+
+    }
+
+    task specs(type: JavaExec, dependsOn: testClasses) {
+        main = 'org.specs2.runner.files'
+
+        // set the CI environment var to *anything* to set output mode to xml
+        def CI = System.getenv("CI")
+
+        args = [ CI ? 'junitxml' : 'console']
+
+        if (configOverride != null) {
+            systemProperties['config.file'] = configOverride
+        }
+
+        classpath sourceSets.main.runtimeClasspath
+        classpath sourceSets.test.runtimeClasspath
+        classpath configurations.testRuntime
+        classpath configurations.runtime
+    }
+
+    test.dependsOn specs
+}
+
+
+project(':desktop') {
+    apply plugin: 'scala'
+    apply plugin: 'application'
+    mainClassName = 'bbgun.DesktopApp'
+
+
+    dependencies {
+        compile project(':core')
+    }
+
+    run {
+        if (configOverride != null) {
+            systemProperties['config.file'] = configOverride
+        }
+    }
+}
+
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.javafxports:jfxmobile-plugin:1.0.0-b9'
+    }
+}
+
+
+project(':ios') {
+    apply plugin: "java"
+    apply plugin: 'org.javafxports.jfxmobile'
+    mainClassName = 'bbgun.MobileApp'
+
+    repositories {
+        jcenter()
+    }
+
+    jfxmobile {
+        ios {
+            forceLinkClasses = ['bbgun.**.*']
+        }
+    }
+
+    dependencies {
+        compile project(':core')
+    }
+
+}

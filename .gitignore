@@ -1,0 +1,12 @@
+build/
+robovm-build/
+.gradle/
+gradle-app.setting
+.idea/
+*.iml
+*.iws
+*.ipr
+target/
+/local.conf
+*.sc
+ios/*.hprof
