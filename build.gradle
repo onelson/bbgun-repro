@@ -27,6 +27,8 @@ project(':core') {
 
     dependencies {
         compile "org.scala-lang:scala-library:$scalaVersion.6"
+        compile "org.scala-lang:scalap:$scalaVersion.6"
+
         compile "org.scalafx:scalafx_$scalaVersion:8.0.40-R8"
         compile "com.typesafe:config:1.3.0"
         compile "net.databinder.dispatch:dispatch-core_$scalaVersion:$dispatchVersion"
@@ -101,12 +103,12 @@ project(':ios') {
     repositories {
         jcenter()
     }
-
-    jfxmobile {
-        ios {
-            forceLinkClasses = ['bbgun.**.*']
-        }
-    }
+//
+//    jfxmobile {
+//        ios {
+//            forceLinkClasses = ['bbgun.**.*']
+//        }
+//    }
 
     dependencies {
         compile project(':core')

@@ -6,6 +6,9 @@
         <resource>
             <directory>core/src/main/resources</directory>
         </resource>
+        <resource>
+            <directory>ios/src/main/resources</directory>
+        </resource>
     </resources>
     <target>ios</target>
     <iosInfoPList>Info.plist.xml</iosInfoPList>

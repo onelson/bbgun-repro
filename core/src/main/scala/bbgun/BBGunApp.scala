@@ -9,37 +9,19 @@ import scalafx.scene.layout.{GridPane, VBox, BorderPane}
 import scalafx.scene.text.Text
 
 
-case class Project(id: Int, name: String, description: String, url: String)
+case class Project(id: Option[Int], name: Option[String], description: Option[String], url: Option[String])
+
 
 class BBGunApp extends BorderPane {
 
-  id = "app"
-
-  val req = Http((
-    host("api.github.com", 443).secure / "search" / "repositories" <<? Map(
-      "q" -> "robovm+language:scala",
-      "sort" -> "stars",
-      "order" -> "desc"
-    )).GET OK as.json4s.Json)
-
   implicit val formats = DefaultFormats
-  val projects = (req() \ "items").extract[Seq[Project]]
+
+  id = "app"
 
   val projectGrid = new GridPane {
     margin = Insets(8)
     hgap = 4
     vgap = 8
-  }
-
-  projects.zipWithIndex.foreach {
-    case (proj, idx) =>
-      projectGrid.add(new Text(proj.name) {
-        prefWidth = 300
-      }, 0, idx)
-      projectGrid.add(new Text(proj.description) {
-        prefWidth = 1000
-      }, 1, idx)
-      projectGrid.add(new Text(proj.url), 2, idx)
   }
 
   center = new VBox {
@@ -50,5 +32,26 @@ class BBGunApp extends BorderPane {
     )
   }
 
+  val base = host("api.github.com", 443).secure / "search" / "repositories" <<? Map(
+    "q" -> "robovm+language:scala",
+    "sort" -> "stars",
+    "order" -> "desc"
+  )
+
+  for (resp <- Http(base.GET OK as.json4s.Json)) {
+    // This code will execute whenever the Future resolves
+    val projects = (resp \ "items").extract[Seq[Project]]
+
+    projects.zipWithIndex.foreach {
+      case (proj: Project, idx: Int) =>
+        projectGrid.add(new Text(proj.name.getOrElse("")) {
+          prefWidth = 300
+        }, 0, idx)
+        projectGrid.add(new Text(proj.description.getOrElse("")) {
+          prefWidth = 1000
+        }, 1, idx)
+        projectGrid.add(new Text(proj.url.getOrElse("")), 2, idx)
+    }
+  }
 
 }
