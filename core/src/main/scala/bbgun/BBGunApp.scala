@@ -19,14 +19,14 @@ case class Project(id: Option[Int], name: Option[String], description: Option[St
 
 
 class BBGunApp extends BorderPane with Logging {
-//  implicit val ec = new ExecutionContext {
-//
-//    def execute(runnable: Runnable) {
-//      Platform.runLater(runnable)
-//    }
-//
-//    def reportFailure(t: Throwable): Unit = error(t)
-//  }
+  implicit val executor = new ExecutionContext with Logging {
+
+    def execute(runnable: Runnable) {
+      Platform.runLater(runnable)
+    }
+
+    def reportFailure(t: Throwable): Unit = error(t)
+  }
 
   implicit val formats = DefaultFormats
 
@@ -55,18 +55,16 @@ class BBGunApp extends BorderPane with Logging {
   for (resp <- Http(base.GET OK as.json4s.Json)) {
     // This code will execute whenever the Future resolves
 
-    Platform.runLater {  // wrap in a runLater() call to notify the main UI thread
-      val projects = (resp \ "items").extract[Seq[Project]]
-      projects.zipWithIndex.foreach {
-        case (proj: Project, idx: Int) =>
-          projectGrid.add(new Text(proj.name.getOrElse("")) {
-            prefWidth = 300
-          }, 0, idx)
-          projectGrid.add(new Text(proj.description.getOrElse("")) {
-            prefWidth = 1000
-          }, 1, idx)
-          projectGrid.add(new Text(proj.url.getOrElse("")), 2, idx)
-      }
+    val projects = (resp \ "items").extract[Seq[Project]]
+    projects.zipWithIndex.foreach {
+      case (proj: Project, idx: Int) =>
+        projectGrid.add(new Text(proj.name.getOrElse("")) {
+          prefWidth = 300
+        }, 0, idx)
+        projectGrid.add(new Text(proj.description.getOrElse("")) {
+          prefWidth = 1000
+        }, 1, idx)
+        projectGrid.add(new Text(proj.url.getOrElse("")), 2, idx)
     }
   }
 
