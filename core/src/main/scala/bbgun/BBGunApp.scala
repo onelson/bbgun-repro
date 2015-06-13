@@ -55,7 +55,7 @@ class BBGunApp extends BorderPane with Logging {
   for (resp <- Http(base.GET OK as.json4s.Json)) {
     // This code will execute whenever the Future resolves
 
-    val projects = (resp \ "items").extract[Seq[Project]]
+    val projects = (resp \ "items").extract[Seq[bbgun.Project]]
     projects.zipWithIndex.foreach {
       case (proj: Project, idx: Int) =>
         projectGrid.add(new Text(proj.name.getOrElse("")) {
