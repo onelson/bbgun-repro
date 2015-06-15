@@ -27,13 +27,13 @@ project(':core') {
 
     dependencies {
         compile "org.scala-lang:scala-library:$scalaVersion.6"
-        compile "org.scala-lang:scalap:$scalaVersion.6"
-        compile "org.scala-lang:scala-reflect:$scalaVersion.6"
 
         compile "org.scalafx:scalafx_$scalaVersion:8.0.40-R8"
         compile "com.typesafe:config:1.3.0"
         compile "net.databinder.dispatch:dispatch-core_$scalaVersion:$dispatchVersion"
         compile "net.databinder.dispatch:dispatch-json4s-jackson_$scalaVersion:$dispatchVersion"
+        compile "org.json4s:muster-codec-json_$scalaVersion:0.3.0"
+        compile "org.json4s:muster-codec-json4s_$scalaVersion:0.3.0"
 
         compile "net.codingwell:scala-guice_$scalaVersion:4.0.0"
         compile "com.google.inject:guice:4.0"
@@ -100,6 +100,7 @@ buildscript {
 project(':ios') {
     apply plugin: "java"
     apply plugin: 'org.javafxports.jfxmobile'
+
     mainClassName = 'bbgun.MobileApp'
 
     repositories {
@@ -113,6 +114,7 @@ project(':ios') {
 //    }
 
     dependencies {
+        compile "org.scala-lang:scalap:$scalaVersion.6"
         compile project(':core')
     }
 

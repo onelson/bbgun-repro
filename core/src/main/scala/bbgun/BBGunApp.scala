@@ -1,8 +1,6 @@
 package bbgun
 
 
-import java.util.concurrent.Executors
-
 import grizzled.slf4j.Logging
 
 import scala.concurrent.ExecutionContext
@@ -15,7 +13,10 @@ import scalafx.scene.layout.{GridPane, VBox, BorderPane}
 import scalafx.scene.text.Text
 
 
-case class Project(id: Option[Int], name: Option[String], description: Option[String], url: Option[String])
+import muster._
+import muster.codec.json4s._
+
+case class Project(id: Int, name: String, description: String, url: String)
 
 
 class BBGunApp extends BorderPane with Logging {
@@ -53,20 +54,20 @@ class BBGunApp extends BorderPane with Logging {
   )
 
   for (resp <- Http(base.GET OK as.json4s.Json)) {
-    // This code will execute whenever the Future resolves
+    val projects = Json4sCodec.as[Seq[bbgun.Project]](resp \ "items")
 
-    val projects = (resp \ "items").extract[Seq[bbgun.Project]]
     projects.zipWithIndex.foreach {
       case (proj: Project, idx: Int) =>
-        projectGrid.add(new Text(proj.name.getOrElse("")) {
+        projectGrid.add(new Text(proj.name) {
           prefWidth = 300
         }, 0, idx)
-        projectGrid.add(new Text(proj.description.getOrElse("")) {
+        projectGrid.add(new Text(proj.description) {
           prefWidth = 1000
         }, 1, idx)
-        projectGrid.add(new Text(proj.url.getOrElse("")), 2, idx)
+        projectGrid.add(new Text(proj.url), 2, idx)
     }
   }
+
 
 
 }
